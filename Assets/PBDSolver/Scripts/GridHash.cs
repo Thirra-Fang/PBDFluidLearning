@@ -5,7 +5,7 @@ using System;
 public class GridHash : IDisposable
 {
 
-    private const int THREDAS = 128;
+    private const int THREADS = 128;
     private const int READ = 0;
     private const int WRITE = 1;
 
@@ -32,14 +32,15 @@ public class GridHash : IDisposable
         TotalParticles = numParticles;
         CellSize = cellSize;
         InvCellSize = 1 / cellSize;
-        Groups = TotalParticles / THREDAS;
-        if (TotalParticles % THREDAS != 0) Groups++;
+        Groups = TotalParticles / THREADS;
+        if (TotalParticles % THREADS != 0) Groups++;
 
         Vector3 min, max;
         min = bounds.min;
         max.x = min.x + (float)Math.Ceiling(bounds.size.x / CellSize);
         max.y = min.y + (float)Math.Ceiling(bounds.size.y / CellSize);
         max.z = min.z + (float)Math.Ceiling(bounds.size.z / CellSize);
+        //？？作用不明，暂时不修改
 
         Bounds = new Bounds();
         Bounds.SetMinMax(min, max);
@@ -50,11 +51,11 @@ public class GridHash : IDisposable
         int depth = (int)Bounds.size.z;
 
         int size = width * height * depth;
-
+        //计算网格计数size
+        
         IndexMap = new ComputeBuffer(TotalParticles, 2 * sizeof(int));
        
         Table = new ComputeBuffer(size, 2 * sizeof(int));
-      //  DebugBuffer = new ComputeBuffer(size, 4 * sizeof(float));
        
         if(BitonicSortisEnabled == true)
         {

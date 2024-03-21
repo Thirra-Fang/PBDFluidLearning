@@ -107,13 +107,11 @@ public class FluidDemo1 : MonoBehaviour
     }
     private void CreateFluid(float fluidRadius,float density, Bounds Bounds, Matrix4x4 TRS)
     {
-
-        
         //particleSourceINIT
         // Bounds bounds = new Bounds(new Vector3(40, 40, 40), new Vector3(50, 50, 35));
         Bounds bounds = new Bounds();
-        Vector3 min = new Vector3(-8, 0, -1);
-        Vector3 max = new Vector3(-4, 8, 2);
+        Vector3 min = new Vector3(-8, 0, -2);
+        Vector3 max = new Vector3(-4, 4, 2);
 
 
         min.x += fluidRadius;
@@ -125,13 +123,30 @@ public class FluidDemo1 : MonoBehaviour
         max.z -= fluidRadius;
 
         bounds.SetMinMax(min, max);
+        
+        Bounds bounds2 = new Bounds();
+        Vector3 min2 = new Vector3(4, 0, 6);
+        Vector3 max2 = new Vector3(8, 4, 10);
+
+
+        min2.x += fluidRadius;
+        min2.y += fluidRadius;
+        min2.z += fluidRadius;
+
+        max2.x -= fluidRadius;
+        max2.y -= fluidRadius;
+        max2.z -= fluidRadius;
+
+        bounds.SetMinMax(min, max);
+        bounds2.SetMinMax(min2, max2);
         ParticleSource source = new ParticleSource(bounds, fluidRadius *2* 0.9f);
+        ParticleSource source2 = new ParticleSource(bounds2, fluidRadius *2* 0.9f);
+        source = source.Combine(source2);
+        
 
         //Create a fluid from source
         m_fluid = new FluidParticles(source, fluidRadius, density, TRS);
         Debug.Log("Fluid Particles = " + source.NumParticles);
-
-
     }
     private void CreateBoundary(float radius,float density)
     {
@@ -171,7 +186,6 @@ public class FluidDemo1 : MonoBehaviour
 
         m_innerSource = innerBounds;
         m_outerSource = outerBounds;
-
     }
         void Update()
     {

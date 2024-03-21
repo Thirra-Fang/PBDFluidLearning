@@ -214,6 +214,15 @@ public class ParticleSource
         return positions;
     }
 
+    public ParticleSource Combine(ParticleSource added)
+    {
+        for (int i = 0; i < added.NumParticles; i++)
+        {
+            Positions.Add(added.Positions[i]);
+        }
+
+        return this;
+    }
  
 
 }

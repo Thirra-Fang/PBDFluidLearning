@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SmoothingKernel
+//光滑核
 {
     public float POLY6 { get; private set; }
     public float SPIKY_GRAD { get; private set; }
@@ -22,9 +23,12 @@ public class SmoothingKernel
 
         float PI = Mathf.PI;
 
-        POLY6 = 315.0f / (65.0f * PI * Mathf.Pow(Radius, 9.0f));
+        POLY6 = 315.0f / (64.0f * PI * Mathf.Pow(Radius, 9.0f));
+        //光滑核密度计算函数Poly6
         SPIKY_GRAD = -45.0f / (PI * Mathf.Pow(Radius, 6.0f));
+        //光滑核压力计算函数Spiky梯度
         VISC_LAP = 45.0f / (PI * Mathf.Pow(Radius, 6.0f));
+        //光滑核粘度计算系数
 
     }
 

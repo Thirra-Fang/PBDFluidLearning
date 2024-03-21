@@ -389,7 +389,7 @@ MonoBehaviour:
   m_drawFluidParticles: 1
   m_drawBoundaryParticles: 1
   m_drawFluidVolume: 1
-  m_simulationQuality: 2
+  m_simulationQuality: 1
   m_run: 1
   m_sphereMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &740729347
