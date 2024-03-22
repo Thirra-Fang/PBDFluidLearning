@@ -34,8 +34,9 @@ int Hash(float3 position){
 	int3 i= clamp(position,0,HashSize-1);
 //DebugHashIndex = position.x + Dimensions.x*(position.y+Dimensions.y*position.z);
 	return i.x + i.y * HashSize.x + i.z * HashSize.x * HashSize.y;
-
+	//？？
 }
+//返回这个位置所在的网格编号
 
 #pragma kernel HashParticles
 [numthreads(THERADS,1,1)]
@@ -91,6 +92,8 @@ void MapTable(int id:SV_DispatchThreadID){
 
 		if(id==TotalParticles-1||hash!= IndexMap[id+1].x)
 			Table[hash].y = id;
+
+		//记录每个格子排序后的始末index
 
 	}
 

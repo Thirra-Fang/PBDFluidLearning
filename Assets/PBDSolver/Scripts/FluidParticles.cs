@@ -45,6 +45,7 @@ public class FluidParticles : IDisposable
         ParticleMass = ParticleVolume * Density0;
 
         densities = new ComputeBuffer(NumParticles, sizeof(float));
+        //每个粒子对应一个（？
        // pressures = new ComputeBuffer(NumParticles, sizeof(float));
         lambda = new ComputeBuffer(NumParticles, sizeof(float));
         CreateParticles(ref source, RTS);
@@ -54,6 +55,7 @@ public class FluidParticles : IDisposable
     
     
     public void CreateParticles(ref ParticleSource source, Matrix4x4 RTS)
+    //该部分与边界粒子的创建类似
     {
          //Vector3[] postest =  source.CreateSphere();
         Vector4[] position = new Vector4[NumParticles];
@@ -88,15 +90,9 @@ public class FluidParticles : IDisposable
        
         this.predicted = new ComputeBuffer(NumParticles, 4*sizeof(float));
         this.predicted.SetData(predicted);
-      
 
-      
         this.velocities = new ComputeBuffer(NumParticles, 4 * sizeof(float));
         this.velocities.SetData(velocities);
-       
-
-
-
 
     }
   

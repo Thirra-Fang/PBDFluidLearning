@@ -72,7 +72,7 @@ public class FluidDemo1 : MonoBehaviour
         float fluidDensity = 1000f;
         //流体密度
         float boundDensity = 1000f;
-        //边界密度
+        //边界密度（在计算psi时用到）
         switch (m_simulationQuality)
         {
             case SIMULATION_QUALITY.LOW:
@@ -111,7 +111,7 @@ public class FluidDemo1 : MonoBehaviour
         // Bounds bounds = new Bounds(new Vector3(40, 40, 40), new Vector3(50, 50, 35));
         Bounds bounds = new Bounds();
         Vector3 min = new Vector3(-8, 0, -2);
-        Vector3 max = new Vector3(-4, 4, 2);
+        Vector3 max = new Vector3(-4, 8, 2);
 
 
         min.x += fluidRadius;
@@ -126,7 +126,7 @@ public class FluidDemo1 : MonoBehaviour
         
         Bounds bounds2 = new Bounds();
         Vector3 min2 = new Vector3(4, 0, 6);
-        Vector3 max2 = new Vector3(8, 4, 10);
+        Vector3 max2 = new Vector3(8, 8, 10);
 
 
         min2.x += fluidRadius;
@@ -188,25 +188,21 @@ public class FluidDemo1 : MonoBehaviour
         m_outerSource = outerBounds;
     }
         void Update()
-    {
+        {
         if (wasError) return;
         if (m_run)
         {
             Profiler.BeginSample("== Physics gc ==");
             m_solver.StepPhysics(timeStep);
-            m_volume.FillVolume(m_fluid, m_solver.Hash, m_solver.smoothingKernel);
+            if(m_drawFluidVolume) m_volume.FillVolume(m_fluid, m_solver.Hash, m_solver.smoothingKernel);
+            if (m_drawFluidParticles)
+                m_fluid.Draw(Camera.current, m_sphereMesh, m_fluidParticleMat, 0);
+            if (m_drawBoundaryParticles)
+                m_boundary.Draw(Camera.main, m_sphereMesh, m_boundaryParticleMat, 0);
             Profiler.EndSample();
 
         }
-
-        if (m_drawFluidParticles)
-            m_fluid.Draw(Camera.current, m_sphereMesh, m_fluidParticleMat, 0);
-        if (m_drawBoundaryParticles)
-            m_boundary.Draw(Camera.main, m_sphereMesh, m_boundaryParticleMat, 0);
-
-
-     
-
+        
         //int total = m_fluid.NumParticles;
      //   int total = m_fluid.NumParticles;
       //  float[] dataPd = new float[total];
@@ -219,10 +215,7 @@ public class FluidDemo1 : MonoBehaviour
         //    // Debug.Log("gridIndex =" + dataP[i].z+ "ParticelId = " + dataP[i].w);
 
        // }
-
-
-
-    }
+        }
 
 
     private void OnDestroy()

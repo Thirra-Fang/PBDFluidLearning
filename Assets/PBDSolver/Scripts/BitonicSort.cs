@@ -29,7 +29,9 @@ public class BitonicSort : IDisposable
     // If you need to resize these you must also change the same values in the shader.
     // TODO - Have a shader for each range and automatically pick which one to use.
     public const int BITONIC_BLOCK_SIZE = 512;
+    //双调块尺寸
     public const int TRANSPOSE_BLOCK_SIZE = 16;
+    //转置块尺寸
 
     public const int MAX_ELEMENTS = BITONIC_BLOCK_SIZE * BITONIC_BLOCK_SIZE;
     public const int MIN_ELEMENTS = BITONIC_BLOCK_SIZE * TRANSPOSE_BLOCK_SIZE;
@@ -160,6 +162,7 @@ public class BitonicSort : IDisposable
         while (NumElements < count);
 
         return NumElements;
+        //取大于count数，小于MAX_ELEMENTS的最小的2次幂
     }
 
 

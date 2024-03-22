@@ -70,6 +70,7 @@ public class BoundaryParticles : IDisposable
 
 
         shader.Dispatch(kernel, groups, 1, 1);
+        //这里并行计算psi，并存入positions的w
 
         grid.Dispose();
 
@@ -84,7 +85,7 @@ public class BoundaryParticles : IDisposable
 
         for (int i = 0; i < NumParticles; i++)
         {
-            Vector4 pos = TRS * source.Positions[i];
+            Vector4 pos = TRS * source.Positions[i];//这里在经过计算后由三维数组变成了四维数组
             //此处作TRS操作
             positions[i] = pos;
 

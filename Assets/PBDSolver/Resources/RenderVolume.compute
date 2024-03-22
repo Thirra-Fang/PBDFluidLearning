@@ -9,6 +9,7 @@ RWStructuredBuffer<int2> Table;
 int3 HashIndex(float3 p)
 {
 	p = (p - HashTranslate) * HashScale;
+	//此处HashScale为1/（4*半径）
 	return clamp(p, 0, HashSize - 1);
 }
 
@@ -48,7 +49,9 @@ float Distance2(float3 a, float3 b)
 float Compute(float3 pi)
 {
 	int3 hashIndex = HashIndex(pi);
+	//转化为PBDSolver中的GradHash的Index
 	int3 size = HashSize;
+	//Hashsize是4倍半径
 
 	float density = 0;
 
@@ -58,6 +61,7 @@ float Compute(float3 pi)
 		{
 			for (int i = -1; i <= 1; i++)
 			{
+				//应该是遍历四周的GridHash的情况
 				int xi = hashIndex.x + i;
 				int yj = hashIndex.y + j;
 				int zk = hashIndex.z + k;
@@ -67,40 +71,49 @@ float Compute(float3 pi)
 				if (zk < 0 || zk >= size.z) continue;
 
 				int hash = xi + yj * size.x + zk * size.x * size.y;
+				//转化为网格的一维index
 				int2 bounds = Table[hash];
+				//Hash在IndexMap中的始末Index
 
 				for (int idx = bounds.x; idx <= bounds.y; idx++)
 				{
 					int n = IndexMap[idx].y;
+					//该网格中的某一个粒子的id
 					if (n > NumParticles) continue;
 
 					float3 pn = Positions[n].xyz;
 					float dist2 = Distance2(pi, pn);
 					if (dist2 >= KernelRadius2) continue;
+					//如果检测到的粒子大于光滑核半径则忽略
 
 					density += Densities[n] * Poly6Kernel(dist2);
+					//用光滑核函数计算这个grid所在位置附近的密度
 				}
 			}
 		}
 	}
 
 	return density / Density;
+	//获得粒子密度
 }
 
 #pragma kernel ComputeVolume
 
-[numthreads(THREADS, THREADS, THREADS)]
+[numthreads(THREADS, THREADS, THREADS)]//???
 void ComputeVolume(int3 id : SV_DispatchThreadID)
 {
 
 	if (id.x < VolumeSize.x && id.y < VolumeSize.y && id.z < VolumeSize.z)
 	{
 		float3 pi = VolumeTranslate + id * VolumeScale;
+		//pi=渲染边界最小点世界坐标+线程组id*体积尺度，其中体积尺度传入的是粒子半径，pi应该是该线程组计算区域对应的世界坐标
+		//线程组长度尺寸为：边界长度/粒子半径向上取整，也即两倍的颗粒数，也即每个线程处理半径为棱长大小的立方体的空间
 
 		float density = Compute(pi);
+		//计算粒子数量密度
 
 		Volume[id] = density * ParticleVolume;
-
+		//此处的体积值，=粒子数量密度*粒子体积
 	}
 
 }

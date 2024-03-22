@@ -24,6 +24,7 @@ public class RenderVolume : IDisposable
     public RenderVolume(Bounds bounds, float pixelSize)
     {
         PixelSize = pixelSize;
+        //这里传入的是半径
 
         Vector3 min, max;
         min.x = bounds.min.x;
@@ -36,10 +37,12 @@ public class RenderVolume : IDisposable
 
         Bounds = new Bounds();
         Bounds.SetMinMax(min, max);
+        //意义不明的求取max和新Bounds的操作
 
         int width = (int)Bounds.size.x;
         int height = (int)Bounds.size.y;
         int depth = (int)Bounds.size.z;
+        //分别是两倍该长度上的人粒子数
 
         int groupsX = width / THREADS;
         if (width % THREADS != 0) groupsX++;
@@ -51,10 +54,11 @@ public class RenderVolume : IDisposable
         if (depth % THREADS != 0) groupsZ++;
 
         Groups = new Vector3Int(groupsX, groupsY, groupsZ);
+        //长度上为两倍粒子数/THREADS
 
         Volume = new RenderTexture(width, height, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear);
         Volume.dimension = TextureDimension.Tex3D;
-        Volume.volumeDepth = depth;
+        Volume.volumeDepth = depth;//传入边界网格的z轴数量？
         Volume.useMipMap = false;
         Volume.enableRandomWrite = true;
         Volume.wrapMode = TextureWrapMode.Clamp;
@@ -83,6 +87,7 @@ public class RenderVolume : IDisposable
             return bounds;
         }
     }
+    //世界坐标的边界
 
     public void Dispose()
     {
@@ -106,6 +111,7 @@ public class RenderVolume : IDisposable
         Bounds bounds = WorldBounds;
         m_mesh.transform.position = bounds.center;
         m_mesh.transform.localScale = bounds.size;
+        //和边界大小一致的一个cube模型
 
         material.SetVector("Translate", m_mesh.transform.position);
         material.SetVector("Scale", m_mesh.transform.localScale);

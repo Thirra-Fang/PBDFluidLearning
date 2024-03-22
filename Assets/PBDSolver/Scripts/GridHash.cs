@@ -18,9 +18,9 @@ public class GridHash : IDisposable
     public ComputeBuffer IndexMap { get; private set; }
     public ComputeBuffer Table { get; private set; }
 
-   // public ComputeBuffer DebugBuffer { get; private set; }
     public BitonicSort m_sort;
     //public RadixSort m_Radixsort;
+    //Radix排序原作者尚未实现
 
     private ComputeShader m_shader;
     private int m_hashKernel, m_clearKernel, m_mapKernel;
@@ -53,14 +53,13 @@ public class GridHash : IDisposable
         int size = width * height * depth;
         //计算网格计数size
         
-        IndexMap = new ComputeBuffer(TotalParticles, 2 * sizeof(int));
+        IndexMap = new ComputeBuffer(TotalParticles, 2 * sizeof(int));//粒子数
        
-        Table = new ComputeBuffer(size, 2 * sizeof(int));
+        Table = new ComputeBuffer(size, 2 * sizeof(int));//网格数
        
         if(BitonicSortisEnabled == true)
         {
             m_sort = new BitonicSort(TotalParticles);
-
         }
         else
         {
@@ -93,6 +92,7 @@ public class GridHash : IDisposable
     }
 
     public void Process(ComputeBuffer particles)
+    //particles传入粒子的位置数组缓存
     {
         if (particles.count != TotalParticles)
             throw new ArgumentException("particles.Length != TotalParticles");
@@ -100,7 +100,7 @@ public class GridHash : IDisposable
         m_shader.SetInt("TotalParticles", TotalParticles);
         m_shader.SetFloat("HashScale", InvCellSize);
         m_shader.SetVector("HashSize", Bounds.size);
-        m_shader.SetBuffer(m_hashKernel, "Particles", particles);
+        m_shader.SetBuffer(m_hashKernel, "Particles", particles);//此处传入所有粒子位置缓存
         m_shader.SetBuffer(m_hashKernel, "Boundary", particles);
         m_shader.SetBuffer(m_hashKernel, "IndexMap", IndexMap);
         m_shader.Dispatch(m_hashKernel, Groups, 1, 1);
@@ -113,9 +113,9 @@ public class GridHash : IDisposable
        // {
            
        // }; 
+       //可能是未实现的Radix排序部分的代码
         
         MapTable();
-        //;
     }
 
     public void Process(ComputeBuffer particles, ComputeBuffer boundary)
