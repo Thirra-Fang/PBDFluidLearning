@@ -117,6 +117,7 @@ public class RenderVolume : IDisposable
         material.SetVector("Scale", m_mesh.transform.localScale);
         material.SetTexture("Volume", Volume);
         material.SetVector("Size", Bounds.size);
+        material.SetFloat("PixelSize",PixelSize);
 
     }
 
