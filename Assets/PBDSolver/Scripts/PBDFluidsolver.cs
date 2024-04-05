@@ -101,8 +101,6 @@ public class PBDFluidSolver : IDisposable
            UpdateVelocities(dt);
            SolveViscosity();
            UpdatePositions();
-
-
         }
 
 

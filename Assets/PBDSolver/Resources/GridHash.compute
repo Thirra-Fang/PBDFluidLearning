@@ -32,9 +32,7 @@ RWStructuredBuffer<float2>Debug;
 int Hash(float3 position){
 	position = (position-HashTranslate)*HashScale;
 	int3 i= clamp(position,0,HashSize-1);
-//DebugHashIndex = position.x + Dimensions.x*(position.y+Dimensions.y*position.z);
 	return i.x + i.y * HashSize.x + i.z * HashSize.x * HashSize.y;
-	//？？
 }
 //返回这个位置所在的网格编号
 
@@ -44,24 +42,18 @@ void HashParticles(int id:SV_DispatchThreadID)
 {
 	int2 index;
 	index.y = id;
-
 	if(id < NumParticles)
 	{
 	//ParticlesPosition 分开
 		index.x = Hash(Particles[id].xyz);
 		IndexMap[id] = index;	
-		//Particles[id].colorGradient.xy = index;
 	}
 	else if (id < TotalParticles)
 	{
-
 		int k = id- NumParticles;
 		index.x = Hash(Boundary[k].xyz);
 		IndexMap[id] = index;
-		
 	}
-	
-
 }
 
 
@@ -79,23 +71,11 @@ void ClearTable(int id:SV_DispatchThreadID)
 void MapTable(int id:SV_DispatchThreadID){
 	if(id< TotalParticles)
 	{
-	 
-		//DebugHashIndex
-		
-		//Debug[id] =IndexMap[id].xy;
-
-
 		int hash = IndexMap[id].x;
-		
 		if(id==0||hash !=IndexMap[id-1].x)
 			Table[hash].x = id;
-
 		if(id==TotalParticles-1||hash!= IndexMap[id+1].x)
 			Table[hash].y = id;
-
 		//记录每个格子排序后的始末index
-
 	}
-
-
 }

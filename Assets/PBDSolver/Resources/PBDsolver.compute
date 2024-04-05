@@ -261,7 +261,6 @@ void ComputeDensity(int id : SV_DispatchThreadID)
         Lambda[id] = lambda_i;
        // Pressures[id] = Lambda[id];
         }
-
 }
 
 float3 SolveDensity(int id,float3 selfPosition,float lambda_i)
@@ -314,52 +313,32 @@ float3 SolveDensity(int id,float3 selfPosition,float lambda_i)
             int m = n-NumParticles;  
             deltaPosition = selfPosition.xyz-Boundary[m].xyz;;
             distanceSqr = dot(deltaPosition,deltaPosition);  
-           
            // psi = 20;
             psi = Boundary[m].w;
-          
             }
-
         if (distanceSqr >= KernelRadius2) continue;
-
-
         float3 gradW = SpikyGradKernel(deltaPosition,distanceSqr);
         if(n<NumParticles)
         {
-
         //解
          //lambda_j = Lambda[n];
          numerator  = Wpoly6Kernel(distanceSqr);
         float denominator = Wpoly6Kernel(dot(delta_q*KernelRadius,delta_q*KernelRadius));
-
         float scorr = -scorr_k*pow(numerator/denominator,scorr_n); 
-       
          delta_p -= -MassMulInvDensity*(lambda_i + Lambda[n]+scorr)*gradW;
- 
          }
     //计算固体粒子的约束
-       
          else{
-  
-        
             delta_p -= -psi* lambda_i *invDensity0*gradW;
-        
-
             }
         }
     LOOP_END
-
-   
    return delta_p;
-   
-
-
 }
 
 
 
 #pragma kernel SolveConstraint
-
 [numthreads(THREADS, 1, 1)]
 void SolveConstraint (int id : SV_DispatchThreadID)
 {
@@ -370,8 +349,6 @@ void SolveConstraint (int id : SV_DispatchThreadID)
        Predicted[id] = float4(pi,0);
     // Pressures[id] = SolveDensity(id, pi, lambda_i);
     }   
-    
-    
 }
 
 
@@ -380,17 +357,12 @@ void SolveConstraint (int id : SV_DispatchThreadID)
 
 [numthreads(THREADS,1,1)]
 void UpdateVelocities(int id:SV_DispatchThreadID){
-
     if(id < NumParticles){
         float4 p = Positions[id];
         float4 pi = Predicted[id];
-
         float4 velocity = (pi-p)/deltaTime;
         Velocities[id]= velocity;
-    
     }
-   
-
 }
 
 float3 ComputeViscosity(int id,float3 selfPosition){
@@ -448,7 +420,6 @@ void SolveViscosity(int id:SV_DispatchThreadID){
 
         Velocities[id] = float4(velocity,0);
     }
-
 }
 
 
@@ -457,10 +428,6 @@ void SolveViscosity(int id:SV_DispatchThreadID){
 void UpdatePositions(int id:SV_DispatchThreadID){
     if(id<NumParticles)
     {
-
     Positions[id] = Predicted[id];
-
     }
-  
-
 }
